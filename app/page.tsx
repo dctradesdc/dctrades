@@ -1,65 +1,113 @@
-import Image from "next/image";
+import { Link } from "next-view-transitions";
+import { ArrowRight, LogOut } from "lucide-react";
 
-export default function Home() {
+import { createClient } from "@/lib/supabase/server";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { TypewriterText } from "@/components/layout/typewriter-text";
+import { Button } from "@/components/ui/button";
+import { signOut } from "@/features/auth/actions";
+
+export default async function HomePage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const primaryHref = user ? "/dashboard" : "/signup";
+  const secondaryHref = user ? "/dashboard" : "/login";
+
+  const primaryLabel = user ? "Dashboard" : "Get Started";
+  const secondaryLabel = user ? "Journal Your Trades" : "Login";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative flex h-screen w-screen flex-col justify-between overflow-hidden bg-background selection:bg-primary/10 select-none">
+      {/* Premium Cinematic Background Layer */}
+      <div className="absolute inset-0 -z-20 bg-linear-to-b from-background via-background to-background" />
+
+      {/* Atmospheric Spatial Glow */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute left-1/2 top-1/2 h-200 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/5 blur-[160px] dark:bg-blue-500/10 dark:blur-[200px]" />
+      </div>
+
+      {/* Header */}
+      <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-6 md:px-12 shrink-0">
+        <Link
+          href="/"
+          className="group flex items-center gap-3 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        >
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border/80 bg-card shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:border-foreground/20">
+            <span className="text-xl font-black tracking-tighter">DC</span>
+          </div>
+          <span className="text-sm font-black uppercase tracking-[0.25em] transition-colors group-hover:text-muted-foreground">
+            DC Trades
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          {user && (
+            <form action={signOut}>
+              <Button type="submit" variant="outline" className="gap-2">
+                <LogOut className="size-4" />
+                Logout
+              </Button>
+            </form>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* Hero Section */}
+      <section className="mx-auto flex max-w-5xl flex-1 flex-col items-center justify-center px-6 text-center">
+        <h1
+          className="max-w-4xl text-5xl italic leading-tight tracking-tight md:text-7xl min-h-[2.5em]"
+          style={{ fontFamily: "Caveat, cursive" }}
+        >
+          Start your <TypewriterText />
+          <br />
+          with journaling.
+        </h1>
+
+        <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          Build discipline, review every trade, monitor your performance,
+          and become a consistently profitable trader.
+        </p>
+
+        <div className="mt-10 flex w-full flex-col gap-4 px-4 sm:w-auto sm:flex-row sm:px-0">
+          <Link href={primaryHref} className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              className="w-full min-w-56 rounded-xl text-base font-medium shadow-md shadow-primary/10 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+            >
+              {primaryLabel}
+              <ArrowRight className="ml-2 size-4" />
+            </Button>
+          </Link>
+
+          <Link href={secondaryHref} className="w-full sm:w-auto">
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full min-w-56 rounded-xl text-base font-medium transition-all duration-300"
+            >
+              {secondaryLabel}
+            </Button>
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Unscrollable Fixed Footer Area */}
+      <footer className="w-full py-6 text-center z-50 shrink-0 border-t border-border/40 bg-background/50 backdrop-blur-xs">
+        <div className="flex justify-center gap-6 text-xs font-medium text-muted-foreground">
+          <Link href="/privacy" className="hover:text-foreground transition-colors">
+            Privacy Policy & Terms
+          </Link>
+          <span className="text-border">|</span>
+          <Link href="/calculator" className="hover:text-foreground transition-colors">
+            Trading Calculator
+          </Link>
+        </div>
+      </footer>
+    </main>
   );
 }

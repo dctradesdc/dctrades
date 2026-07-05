@@ -1,0 +1,26 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function PageLoading() {
+  return (
+    <div className="space-y-6 p-6 animate-pulse">
+      {/* Header */}
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-56" />
+        <Skeleton className="h-4 w-80" />
+      </div>
+
+      {/* Stats */}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-32 rounded-xl" />
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="grid gap-6 xl:grid-cols-3">
+        <Skeleton className="h-96 rounded-xl xl:col-span-2" />
+        <Skeleton className="h-96 rounded-xl" />
+      </div>
+    </div>
+  );
+}
