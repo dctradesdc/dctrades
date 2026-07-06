@@ -42,9 +42,9 @@ export function AccountCard({
   onDelete,
   onSetActive,
 }: AccountCardProps) {
-  const currentBalance =
-    metrics?.currentBalance ??
-    account.account_size;
+const currentBalance =
+  metrics?.currentBalance ??
+  Number(account.current_balance);
 
   const profit =
     metrics?.totalPnL ?? 0;

@@ -28,7 +28,6 @@ export function TradeForm({ trade, onSuccess }: TradeFormProps) {
   const [isPending, startTransition] = useTransition();
   const isEditing = !!trade;
 
-  // Extracted safely as a string representation to bind natively with HTML date picker attributes
   const formattedDefaultDate: string = trade
     ? new Date(trade.trade_date).toISOString().split("T")[0]
     : new Date().toISOString().split("T")[0];
@@ -94,31 +93,60 @@ export function TradeForm({ trade, onSuccess }: TradeFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 md:space-y-8">
-      {/* Workspace Graphics Upload Segment */}
-      <TradeImages control={control} />
+    /* 
+      FIXED CONTAINER WIDENING: 
+      Increased max-w-lg to max-w-4xl to give room to expand on desktop, 
+      while keeping it perfectly bounded on mobile screens.
+    */
+    <div className="container mx-auto max-w-4xl px-4 md:px-0 py-4 md:py-6">
+      
+      <h1 className="text-xl font-bold mb-6 text-foreground md:text-2xl">
+        {isEditing ? `Edit Trade: ${trade?.pair}` : "Create New Trade Record"}
+      </h1>
 
-      {/* Primary Asset Core Parameters */}
-      <TradeBasicInfo control={control} register={register} errors={errors} />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        
+        {/* 1. Images Segment: Children can stack natively or follow their internal responsive layouts */}
+        <TradeImages control={control} />
 
-      {/* Dynamic Orders Direction & Outcomes Workspace */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <TradeDirection control={control} />
-        <TradeResult control={control} />
-      </div>
+        {/* 
+          2. Form Metadata Fields Grid: 
+          On mobile, everything stays nicely stacked vertically.
+          On `md:` devices and up, fields expand horizontally into a clean 2-column format.
+        */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* Core Basic Info (Asset Pair & Size) */}
+          <div className="md:col-span-2">
+            <TradeBasicInfo control={control} register={register} errors={errors} />
+          </div>
 
-      {/* Timeline Configurations & Context Matrices */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <TradeSession control={control} />
-        <TradeDate register={register} errors={errors} />
-      </div>
+          {/* Trade Execution Vectors */}
+          <TradeDirection control={control} />
+          <TradeResult control={control} />
 
-      {/* Rationale & retrospective journals */}
-      <TradeReason register={register} errors={errors} />
-      <TradeNotes register={register} errors={errors} />
+          {/* Temporal Alignment Vectors */}
+          <TradeSession control={control} />
+          <TradeDate register={register} errors={errors} />
+          
+        </div>
 
-      {/* Execution Frame Commit Controller */}
-      <TradeSubmit isPending={isPending} />
-    </form>
+        {/* 
+          3. Retrospective Context Areas:
+          Full width textareas sit beneath the multi-column layout grid.
+        */}
+        <div className="space-y-6">
+          <TradeReason register={register} errors={errors} />
+          <TradeNotes register={register} errors={errors} />
+        </div>
+
+        {/* Commit Actions Frame */}
+        <div className="pt-4 border-t border-border/40 flex justify-end">
+          <div className="w-full md:w-auto md:min-w-35">
+            <TradeSubmit isPending={isPending} />
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }

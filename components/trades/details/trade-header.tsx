@@ -62,8 +62,12 @@ export function TradeHeader({ trade }: TradeHeaderProps) {
 
           {/* Inline Spatial Parameters Row */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-medium text-muted-foreground/90">
+            {/* 
+              FIXED: Explicitly defined "en-US" to keep server and browser string generation 
+              100% in sync, resolving the runtime hydration error.
+            */}
             <span>
-              {new Date(trade.trade_date).toLocaleDateString(undefined, {
+              {new Date(trade.trade_date).toLocaleDateString("en-US", {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric'
