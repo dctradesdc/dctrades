@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+import { createMetadata } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
+
+export const metadata: Metadata = createMetadata({
+  title: "Forgot Password",
+  description:
+    "Reset your DC Trades account password and get back to your trading journal.",
+  path: "/forgot-password",
+  noIndex: true,
+});
 
 export default async function ForgotPasswordPage() {
   const supabase = await createClient();

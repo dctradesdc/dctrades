@@ -10,15 +10,16 @@ export async function signIn(
 ) {
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { error } =
+    await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
 
   if (error) {
     return {
       success: false,
-      message: error.message,
+      message: "Invalid email or password.",
     };
   }
 
@@ -27,15 +28,56 @@ export async function signIn(
 
 export async function signUp(
   email: string,
-  password: string
+  password: string,
+  acceptedTerms: boolean
 ) {
+  // Server-side enforcement
+  if (!acceptedTerms) {
+    return {
+      success: false,
+      message:
+        "You must agree to the Terms of Service and Privacy Policy.",
+    };
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (!normalizedEmail || !password) {
+    return {
+      success: false,
+      message: "Email and password are required.",
+    };
+  }
+
+  if (password.length < 8) {
+    return {
+      success: false,
+      message:
+        "Password must be at least 8 characters long.",
+    };
+  }
+
   const supabase = await createClient();
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    "https://www.dctrades.in";
+
   const { error } = await supabase.auth.signUp({
-    email,
+    email: normalizedEmail,
     password,
+
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: `${siteUrl}/auth/callback`,
+
+      // Records the version accepted at account creation.
+      data: {
+        terms_accepted: true,
+        terms_version: "2026-08-09",
+        privacy_policy_version: "2026-08-09",
+        legal_accepted_at: new Date().toISOString(),
+      },
     },
   });
 
@@ -48,7 +90,8 @@ export async function signUp(
 
   return {
     success: true,
-    message: "Account created successfully. Please check your email to verify your account.",
+    message:
+      "Account created successfully. Please check your email to verify your account.",
   };
 }
 

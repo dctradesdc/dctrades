@@ -1,11 +1,20 @@
+import type { Metadata } from "next";
 import { Link } from "next-view-transitions";
 import { redirect } from "next/navigation";
 
+import { createMetadata } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { LoginForm } from "@/components/auth/login-form";
 import { SocialLogin } from "@/components/auth/social-login";
+
+export const metadata: Metadata = createMetadata({
+  title: "Login",
+  description: "Sign in to your DC Trades trading journal account.",
+  path: "/login",
+  noIndex: true,
+});
 
 export default async function LoginPage() {
   const supabase = await createClient();

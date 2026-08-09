@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
-  "https://dctrades.in";
+  process.env.NEXT_PUBLIC_APP_URL ?? "https://dctrades.in";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -15,34 +14,46 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${siteUrl}/login`,
+      url: `${siteUrl}/calculator`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${siteUrl}/signup`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${siteUrl}/forgot-password`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${siteUrl}/privacy-policy`,
+      url: `${siteUrl}/privacy`,
       lastModified: now,
       changeFrequency: "yearly",
-      priority: 0.4,
+      priority: 0.3,
     },
     {
       url: `${siteUrl}/terms`,
       lastModified: now,
       changeFrequency: "yearly",
-      priority: 0.4,
+      priority: 0.3,
+    },
+    {
+      url: `${siteUrl}/refund-policy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${siteUrl}/cookie-policy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${siteUrl}/disclaimer`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${siteUrl}/pricing`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
   ];
 }

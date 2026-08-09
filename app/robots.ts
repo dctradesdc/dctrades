@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
-  "https://dctrades.in";
+  process.env.NEXT_PUBLIC_APP_URL ?? "https://dctrades.in";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,11 +10,12 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: [
           "/",
-          "/login",
-          "/signup",
-          "/forgot-password",
-          "/privacy-policy",
+          "/privacy",
           "/terms",
+          "/refund-policy",
+          "/cookie-policy",
+          "/disclaimer",
+          "/calculator",
         ],
         disallow: [
           "/dashboard",
@@ -26,7 +26,11 @@ export default function robots(): MetadataRoute.Robots {
           "/calendar",
           "/settings",
           "/profile",
+          "/login",
+          "/signup",
+          "/forgot-password",
           "/api/",
+          "/pricing",
         ],
       },
     ],

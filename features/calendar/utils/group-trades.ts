@@ -1,50 +1,41 @@
 import type { Trade } from "@/types/trade";
 
-import type {
-  CalendarDay,
-} from "../types";
+import type { CalendarDay } from "../types";
 
 export function groupTradesByDay(
   trades: Trade[]
 ): CalendarDay[] {
-  const grouped = new Map<
-    string,
-    CalendarDay
-  >();
+  const grouped = new Map<string, CalendarDay>();
 
   for (const trade of trades) {
-    const date = new Date(
-      trade.trade_date
-    )
-      .toISOString()
-      .split("T")[0];
+    /**
+     * Keep the calendar date exactly as stored.
+     *
+     * Do NOT use:
+     * new Date(trade.trade_date).toISOString()
+     *
+     * because timezone conversion can move a trade
+     * to the previous day.
+     */
+    const date = trade.trade_date.slice(0, 10);
 
     if (!grouped.has(date)) {
       grouped.set(date, {
         date,
-
         trades: [],
-
         pnl: 0,
-
         wins: 0,
-
         losses: 0,
-
         breakeven: 0,
-
         tradeCount: 0,
       });
     }
 
-    const day =
-      grouped.get(date)!;
+    const day = grouped.get(date)!;
 
     day.trades.push(trade);
 
-    day.pnl += Number(
-      trade.pnl ?? 0
-    );
+    day.pnl += Number(trade.pnl ?? 0);
 
     day.tradeCount++;
 
@@ -63,9 +54,7 @@ export function groupTradesByDay(
     }
   }
 
-  return Array.from(
-    grouped.values()
-  ).sort((a, b) =>
+  return Array.from(grouped.values()).sort((a, b) =>
     a.date.localeCompare(b.date)
   );
 }

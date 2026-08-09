@@ -1,13 +1,15 @@
 "use server";
 
 import type { TradeSchema } from "../validation";
-
 import { tradeSchema } from "../validation";
 
 import {
   getActiveAccount,
   revalidateTrades,
 } from "./helpers";
+
+import { getUserSubscription } from "@/lib/subscriptions/get-user-plan";
+import { canCreateTrade } from "@/lib/subscriptions/limits";
 
 export async function createTrade(
   values: TradeSchema
@@ -40,6 +42,60 @@ export async function createTrade(
     return {
       success: false,
       message: "Invalid trade data.",
+    };
+  }
+
+  /*
+   * Check the user's current plan.
+   * Existing trades are never modified or deleted.
+   */
+  const subscription =
+    await getUserSubscription();
+
+  /*
+   * Count all trades belonging to the user.
+   *
+   * We count existing trades across all journal
+   * accounts because the Free plan has a total
+   * trade limit.
+   */
+  const { count, error: countError } =
+    await supabase
+      .from("trades")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq("user_id", user.id);
+
+  if (countError) {
+    console.error(
+      "Trade count error:",
+      countError
+    );
+
+    return {
+      success: false,
+      message:
+        "Unable to verify your trade limit.",
+    };
+  }
+
+  const currentTrades = count ?? 0;
+
+  /*
+   * Enforce plan limit.
+   */
+  if (
+    !canCreateTrade(
+      subscription.plan,
+      currentTrades
+    )
+  ) {
+    return {
+      success: false,
+      message:
+        "You have reached the 10-trade limit on the Free plan. Upgrade to Basic or Pro to continue journaling unlimited trades.",
     };
   }
 
@@ -81,9 +137,15 @@ export async function createTrade(
     });
 
   if (error) {
+    console.error(
+      "Create trade error:",
+      error
+    );
+
     return {
       success: false,
-      message: error.message,
+      message:
+        "Unable to save the trade.",
     };
   }
 

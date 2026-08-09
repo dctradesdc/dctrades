@@ -6,77 +6,54 @@ import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 import { AppProvider } from "@/components/providers/app-provider";
+import { siteConfig } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
-  "https://dctrades.in";
-
-const ogImage =
-  "https://res.cloudinary.com/dniwuwt6j/image/upload/v1783278365/Gemini_Generated_Image_sxqqm9sxqqm9sxqq_yb3qvw.png";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteConfig.url),
 
   title: {
-    default: "DC Trades",
+    default: siteConfig.title,
     template: "%s | DC Trades",
   },
 
-  description:
-    "DC Trades is a free professional trading journal that helps Forex, Crypto, and Stock traders track trades, analyze performance, manage risk, and improve consistency.",
+  description: siteConfig.description,
 
-  applicationName: "DC Trades",
+  applicationName: siteConfig.name,
 
-  keywords: [
-    "DC Trades",
-    "Trading Journal",
-    "Trading Log",
-    "Trade Tracker",
-    "Forex Journal",
-    "Crypto Journal",
-    "Stock Trading Journal",
-    "Trading Analytics",
-    "Trading Dashboard",
-    "Risk Management",
-    "Trading SaaS",
-    "Forex Trading",
-    "Crypto Trading",
-    "Performance Tracker",
-    "Journal App",
-  ],
+  keywords: siteConfig.keywords,
 
   authors: [
     {
-      name: "DC Trades",
-      url: siteUrl,
+      name: siteConfig.name,
+      url: siteConfig.url,
     },
   ],
 
-  creator: "DC Trades",
-
-  publisher: "DC Trades",
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
 
   category: "Finance",
-
   classification: "Trading Journal",
 
   referrer: "origin-when-cross-origin",
 
   alternates: {
-    canonical: siteUrl,
+    canonical: siteConfig.url,
   },
 
   robots: {
     index: true,
     follow: true,
-    nocache: false,
+
     googleBot: {
       index: true,
       follow: true,
+      noimageindex: false,
       "max-image-preview": "large",
       "max-video-preview": -1,
       "max-snippet": -1,
@@ -86,34 +63,34 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
-    siteName: "DC Trades",
-    title: "DC Trades | Professional Trading Journal",
-    description:
-      "Track trades, analyze performance, manage risk, and become a better trader with DC Trades.",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+
     images: [
       {
-        url: ogImage,
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: "DC Trades",
+        alt: siteConfig.title,
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "DC Trades | Professional Trading Journal",
-    description:
-      "A modern trading journal for Forex, Crypto, and Stock traders.",
-    creator: "@dctrades",
-    images: [ogImage],
+    title: siteConfig.title,
+    description: siteConfig.description,
+    creator: siteConfig.twitterHandle,
+    images: [siteConfig.ogImage],
   },
 
   icons: {
     icon: [
       {
         url: "/favicon.ico",
+        type: "image/x-icon",
       },
     ],
     shortcut: "/favicon.ico",
@@ -125,7 +102,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "DC Trades",
+    title: siteConfig.name,
   },
 
   formatDetection: {
@@ -135,35 +112,60 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+
+  name: siteConfig.name,
+
+  url: siteConfig.url,
+
+  description: siteConfig.description,
+
+  applicationCategory: "FinanceApplication",
+
+  operatingSystem: "Web",
+
+  browserRequirements: "Requires JavaScript",
+
+  image: siteConfig.ogImage,
+
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+
+  creator: {
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <ViewTransitions>
-      <html
-        lang="en"
-        suppressHydrationWarning
-      >
-        <body className={inter.className}>
-          <NextTopLoader
-            color="#3b82f6"
-            initialPosition={0.08}
-            crawlSpeed={200}
-            height={3}
-            crawl
-            easing="ease"
-            speed={200}
-            shadow="0 0 10px #3b82f6, 0 0 5px #3b82f6"
-            showSpinner={false}
-          />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
+      </head>
 
-          <AppProvider>
-            {children}
-          </AppProvider>
-        </body>
-      </html>
-    </ViewTransitions>
+      <body className={inter.className}>
+        <ViewTransitions>
+          <NextTopLoader />
+
+          <AppProvider>{children}</AppProvider>
+        </ViewTransitions>
+      </body>
+    </html>
   );
 }
