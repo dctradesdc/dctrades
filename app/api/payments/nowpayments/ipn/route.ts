@@ -71,11 +71,17 @@ export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
 
-    const signature = request.headers.get(
-      "x-nowpayments-sig"
-    );
+    const signature =
+      request.headers.get(
+        "x-nowpayments-sig"
+      );
 
-    if (!verifySignature(rawBody, signature)) {
+    if (
+      !verifySignature(
+        rawBody,
+        signature
+      )
+    ) {
       console.warn(
         "Rejected NOWPayments IPN: invalid signature."
       );
@@ -97,7 +103,8 @@ export async function POST(request: Request) {
       : null;
 
     const paymentStatus =
-      typeof payload.payment_status === "string"
+      typeof payload.payment_status ===
+      "string"
         ? payload.payment_status
         : null;
 
@@ -118,6 +125,9 @@ export async function POST(request: Request) {
     const status =
       mapPaymentStatus(paymentStatus);
 
+    /*
+     * Find local payment order.
+     */
     const {
       data: paymentOrder,
       error: lookupError,
@@ -152,6 +162,9 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * Security check.
+     */
     if (
       paymentOrder.provider_payment_id &&
       paymentOrder.provider_payment_id !==
@@ -168,26 +181,19 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Do not downgrade a completed payment.
+     * Update payment order status.
      */
-    if (
-      paymentOrder.status === "finished"
-    ) {
-      return NextResponse.json({
-        success: true,
-      });
-    }
-
-    const { error: paymentUpdateError } =
-      await supabase
-        .from("payment_orders")
-        .update({
-          provider_payment_id: paymentId,
-          status,
-          updated_at:
-            new Date().toISOString(),
-        })
-        .eq("id", paymentOrder.id);
+    const {
+      error: paymentUpdateError,
+    } = await supabase
+      .from("payment_orders")
+      .update({
+        provider_payment_id: paymentId,
+        status,
+        updated_at:
+          new Date().toISOString(),
+      })
+      .eq("id", paymentOrder.id);
 
     if (paymentUpdateError) {
       console.error(
@@ -202,8 +208,8 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Only FINISHED payments activate
-     * a DC Trades subscription.
+     * Only finished payments activate
+     * subscriptions.
      */
     if (paymentStatus !== "finished") {
       return NextResponse.json({
@@ -211,15 +217,57 @@ export async function POST(request: Request) {
       });
     }
 
+    /*
+     * IMPORTANT:
+     * Check whether this payment has
+     * already created a subscription.
+     *
+     * This prevents duplicate IPN calls
+     * from extending the subscription.
+     */
+    const {
+      data: alreadyProcessed,
+      error:
+        alreadyProcessedError,
+    } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .eq(
+        "provider_payment_id",
+        paymentId
+      )
+      .maybeSingle();
+
+    if (alreadyProcessedError) {
+      console.error(
+        "Subscription duplicate check error:",
+        alreadyProcessedError
+      );
+
+      return NextResponse.json(
+        { success: false },
+        { status: 500 }
+      );
+    }
+
+    if (alreadyProcessed) {
+      return NextResponse.json({
+        success: true,
+        message:
+          "Payment already processed.",
+      });
+    }
+
     const durationDays = 92;
     const now = new Date();
 
     /*
-     * Find the user's active subscription.
+     * Find current active subscription.
      */
     const {
       data: existingSubscription,
-      error: subscriptionLookupError,
+      error:
+        subscriptionLookupError,
     } = await supabase
       .from("subscriptions")
       .select(
@@ -248,6 +296,10 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * Existing active subscription:
+     * extend it by 92 days.
+     */
     if (existingSubscription) {
       const currentExpiry =
         existingSubscription.expires_at
@@ -270,7 +322,8 @@ export async function POST(request: Request) {
       );
 
       const {
-        error: updateSubscriptionError,
+        error:
+          updateSubscriptionError,
       } = await supabase
         .from("subscriptions")
         .update({
@@ -304,6 +357,10 @@ export async function POST(request: Request) {
         );
       }
     } else {
+      /*
+       * No active subscription:
+       * create a new one.
+       */
       const expiresAt =
         new Date(now);
 
@@ -319,14 +376,20 @@ export async function POST(request: Request) {
         .insert({
           user_id:
             paymentOrder.user_id,
+
           plan:
             paymentOrder.plan,
+
           status: "active",
+
           provider: "nowpayments",
+
           provider_payment_id:
             paymentId,
+
           started_at:
             now.toISOString(),
+
           expires_at:
             expiresAt.toISOString(),
         });
@@ -354,7 +417,9 @@ export async function POST(request: Request) {
     );
 
     return NextResponse.json(
-      { success: false },
+      {
+        success: false,
+      },
       { status: 500 }
     );
   }

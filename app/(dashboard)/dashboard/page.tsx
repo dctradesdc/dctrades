@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 
 import { AccountProgressCard } from "@/components/dashboard/account-progress-card";
 import { AccountSwitcher } from "@/components/dashboard/account-switcher";
+import { SubscriptionCard } from "@/components/dashboard/subscription-card";
+
 import { AnalysisHeader } from "@/components/analysis/analysis-header";
 import { AnalysisStats } from "@/components/analysis/analysis-stats";
 import { PerformanceStats } from "@/components/analysis/performance-stats";
@@ -10,20 +12,48 @@ import { getAccountsList } from "@/features/accounts/queries";
 import { getAccountMetrics } from "@/features/accounts/queries/get-account-metrics";
 import { getActiveAccount } from "@/features/trades/actions/helpers";
 
+import { getUserSubscription } from "@/lib/subscriptions/get-user-plan";
+
 export default async function DashboardPage() {
-  const { user, account } =
-    await getActiveAccount();
+  const {
+    supabase,
+    user,
+    account,
+  } = await getActiveAccount();
 
   if (!user || !account) {
     redirect("/accounts");
   }
 
-const accounts = await getAccountsList();
+  const accounts = await getAccountsList();
+
+  // Current subscription
+  const subscription =
+    await getUserSubscription();
+
+  // Account usage
+  const { count: accountCount } =
+    await supabase
+      .from("accounts")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq("user_id", user.id)
+      .eq("archived", false);
+
+  // Trade usage
+  const { count: tradeCount } =
+    await supabase
+      .from("trades")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq("user_id", user.id);
 
   const data =
-    await getAccountMetrics(
-      account.id
-    );
+    await getAccountMetrics(account.id);
 
   let statsMetrics: {
     totalTrades: number;
@@ -47,8 +77,7 @@ const accounts = await getAccountsList();
       >;
 
     const breakevens =
-      typeof m.breakevens ===
-      "number"
+      typeof m.breakevens === "number"
         ? m.breakevens
         : 0;
 
@@ -56,17 +85,20 @@ const accounts = await getAccountsList();
       typeof m.netPnl === "number"
         ? m.netPnl
         : typeof m.pnl === "number"
-        ? m.pnl
-        : 0;
+          ? m.pnl
+          : 0;
 
     statsMetrics = {
       totalTrades:
         data.metrics.wins +
         data.metrics.losses +
         breakevens,
+
       netPnL: netPnl,
+
       winRate:
         data.metrics.winRate,
+
       profitFactor:
         data.metrics.profitFactor,
     };
@@ -74,31 +106,40 @@ const accounts = await getAccountsList();
     performanceMetrics = {
       bestPair:
         data.metrics.bestPair,
-      wins: data.metrics.wins,
+
+      wins:
+        data.metrics.wins,
+
       losses:
         data.metrics.losses,
+
       bestSession:
         data.metrics.bestSession,
     };
   }
 
   return (
-    <div className="mx-auto w-full max-w-[120rem] space-y-6 p-4 sm:p-6 lg:space-y-8 lg:p-8 2xl:p-12">
-      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-        <div className="min-w-0 flex-1">
-          <AnalysisHeader />
-        </div>
+    <div className="w-full min-w-0 space-y-6">
+      {/* Header */}
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AnalysisHeader />
 
         <div className="w-full shrink-0 sm:w-auto">
           <AccountSwitcher
             accounts={accounts}
-            activeAccountId={
-              account.id
-            }
+            activeAccountId={account.id}
           />
         </div>
       </div>
 
+      {/* Subscription */}
+      <SubscriptionCard
+        subscription={subscription}
+        accountCount={accountCount ?? 0}
+        tradeCount={tradeCount ?? 0}
+      />
+
+      {/* Account Progress */}
       {data && (
         <div className="w-full min-w-0 overflow-hidden">
           <AccountProgressCard
@@ -107,12 +148,14 @@ const accounts = await getAccountsList();
         </div>
       )}
 
+      {/* Statistics */}
       {statsMetrics && (
         <AnalysisStats
           metrics={statsMetrics}
         />
       )}
 
+      {/* Performance */}
       {performanceMetrics && (
         <PerformanceStats
           bestPair={

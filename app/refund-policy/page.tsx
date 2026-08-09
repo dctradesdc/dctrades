@@ -6,7 +6,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata: Metadata = createMetadata({
   title: "Refund & Cancellation Policy",
   description:
-    "Learn about DC Trades subscriptions, cancellations, refunds, cryptocurrency payments, and billing.",
+    "Learn about DC Trades payments, cancellations, refunds, cryptocurrency payments, and subscription terms.",
   path: "/refund-policy",
 });
 
@@ -40,9 +40,9 @@ export default function RefundPolicyPage() {
             {/* Lead Paragraph */}
             <div className="text-sm leading-relaxed">
               <p>
-                This Refund &amp; Cancellation Policy explains how cancellations,
-                refunds, payments, and subscription-related matters are handled
-                for DC Trades services.
+                This Refund &amp; Cancellation Policy explains how payments, cancellations,
+                refunds, and subscription-related matters are handled for DC Trades, a
+                trading journal platform.
               </p>
             </div>
 
@@ -52,20 +52,22 @@ export default function RefundPolicyPage() {
                 Contents
               </p>
               <ol className="space-y-1 text-muted-foreground list-decimal list-inside">
-                <li><a href="#subscriptions" className="hover:underline">Subscriptions</a></li>
+                <li><a href="#paid-plans" className="hover:underline">Paid Plans</a></li>
                 <li><a href="#cancellation" className="hover:underline">Cancellation</a></li>
                 <li><a href="#refunds" className="hover:underline">Refunds</a></li>
-                <li><a href="#incorrect-charges" className="hover:underline">Duplicate or Incorrect Charges</a></li>
+                <li><a href="#incorrect-payments" className="hover:underline">Duplicate or Incorrect Payments</a></li>
                 <li><a href="#crypto-payments" className="hover:underline">Cryptocurrency Payments</a></li>
+                <li><a href="#crypto-errors" className="hover:underline">Incorrect Cryptocurrency or Network</a></li>
                 <li><a href="#crypto-refunds" className="hover:underline">Cryptocurrency Refunds</a></li>
-                <li><a href="#failed-payments" className="hover:underline">Failed Payments</a></li>
+                <li><a href="#failed-payments" className="hover:underline">Failed, Expired, or Unconfirmed Payments</a></li>
+                <li><a href="#confirmation" className="hover:underline">Payment Confirmation and Activation</a></li>
                 <li><a href="#disputes" className="hover:underline">Chargebacks and Payment Disputes</a></li>
                 <li><a href="#promotions" className="hover:underline">Promotional Offers</a></li>
-                <li><a href="#free-plans" className="hover:underline">Free Plans and Trials</a></li>
-                <li><a href="#termination" className="hover:underline">Account Termination</a></li>
+                <li><a href="#free-plan" className="hover:underline">Free Plan</a></li>
+                <li><a href="#termination" className="hover:underline">Account Suspension or Termination</a></li>
                 <li><a href="#service-changes" className="hover:underline">Service Changes</a></li>
                 <li><a href="#request-refund" className="hover:underline">How to Request a Refund</a></li>
-                <li><a href="#processing" className="hover:underline">Processing Refund Requests</a></li>
+                <li><a href="#processing" className="hover:underline">Refund Processing</a></li>
                 <li><a href="#consumer-rights" className="hover:underline">Consumer Rights</a></li>
                 <li><a href="#policy-changes" className="hover:underline">Changes to This Policy</a></li>
                 <li><a href="#contact" className="hover:underline">Contact</a></li>
@@ -74,20 +76,25 @@ export default function RefundPolicyPage() {
 
             {/* Article Sections */}
             <article className="space-y-8 text-sm leading-relaxed">
-              <section id="subscriptions">
+              <section id="paid-plans">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  1. Subscriptions
+                  1. Paid Plans
                 </h2>
                 <p className="mb-3">
-                  Certain DC Trades features may be offered through paid
-                  subscriptions or other paid plans. The applicable price, billing
-                  period, and subscription terms will be displayed before you
-                  complete a purchase.
+                  DC Trades currently offers paid subscription plans that may include:
+                </p>
+                <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground mb-3">
+                  <li>Basic: $15 for 92 days</li>
+                  <li>Pro: $30 for 92 days</li>
+                </ul>
+                <p className="mb-3">
+                  The applicable plan, price, duration, and payment instructions are
+                  displayed before payment.
                 </p>
                 <p>
-                  By completing a purchase, you authorize the applicable payment
-                  provider to process the payment according to the selected plan
-                  and payment terms.
+                  DC Trades currently processes cryptocurrency payments through a third-party
+                  payment provider. Paid access is activated after the payment has been
+                  successfully confirmed.
                 </p>
               </section>
 
@@ -96,18 +103,16 @@ export default function RefundPolicyPage() {
                   2. Cancellation
                 </h2>
                 <p className="mb-3">
-                  You may cancel your subscription according to the cancellation
-                  options made available through your account or the applicable
-                  payment provider.
+                  DC Trades paid plans are currently purchased for a fixed 92-day period.
                 </p>
                 <p className="mb-3">
-                  Cancellation normally prevents future renewal but does not
-                  automatically create a refund for a payment that has already been
-                  completed.
+                  Unless otherwise stated at checkout, these plans do not automatically renew.
                 </p>
                 <p>
-                  Unless otherwise stated at checkout, you may continue to access
-                  paid features until the end of the applicable paid billing period.
+                  Because there is no automatic renewal, there is normally no recurring
+                  subscription cancellation required. Your paid access remains available
+                  until the end of the applicable 92-day period, unless your account is
+                  suspended or terminated under our Terms of Service.
                 </p>
               </section>
 
@@ -116,32 +121,40 @@ export default function RefundPolicyPage() {
                   3. Refunds
                 </h2>
                 <p className="mb-3">
-                  Refund eligibility depends on the plan, purchase terms, applicable
-                  law, and circumstances of the request.
+                  Because DC Trades provides access to a digital service, completed payments
+                  are generally non-refundable once the paid subscription has been activated.
                 </p>
-                <p className="mb-3">
-                  Where a refund is required by applicable law, DC Trades will honor
-                  the applicable legal requirement.
+                <p className="mb-2">
+                  However, DC Trades may consider refund requests in cases such as:
                 </p>
+                <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground mb-3">
+                  <li>Duplicate payments</li>
+                  <li>Clearly incorrect charges</li>
+                  <li>Technical problems that prevent access to a paid subscription</li>
+                  <li>A payment being incorrectly processed</li>
+                  <li>Other circumstances where a refund is required by applicable law</li>
+                </ul>
                 <p>
-                  Except where required by law or expressly stated at checkout,
-                  completed subscription payments are generally non-refundable after
-                  the applicable billing period has started.
+                  Nothing in this policy limits any mandatory consumer rights that apply to
+                  you.
                 </p>
               </section>
 
-              <section id="incorrect-charges">
+              <section id="incorrect-payments">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  4. Duplicate or Incorrect Charges
+                  4. Duplicate or Incorrect Payments
                 </h2>
                 <p className="mb-3">
-                  If you believe you were charged more than once for the same
-                  transaction or were charged incorrectly, contact us as soon as
-                  reasonably possible.
+                  If you believe you were charged more than once or paid an incorrect amount,
+                  contact DC Trades as soon as possible.
+                </p>
+                <p className="mb-3">
+                  We may review the payment and, where appropriate, issue a correction or
+                  refund.
                 </p>
                 <p>
-                  We may review the transaction and, where appropriate, correct
-                  duplicate or erroneous charges.
+                  Please provide your payment reference ID or transaction information when
+                  contacting us.
                 </p>
               </section>
 
@@ -150,203 +163,249 @@ export default function RefundPolicyPage() {
                   5. Cryptocurrency Payments
                 </h2>
                 <p className="mb-3">
-                  DC Trades may support cryptocurrency payments through third-party
-                  payment services.
+                  DC Trades currently supports cryptocurrency payments through a third-party
+                  payment provider.
                 </p>
+                <p className="mb-2">Payments may involve:</p>
+                <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground mb-3">
+                  <li>Blockchain network fees</li>
+                  <li>Confirmation delays</li>
+                  <li>Exchange-rate changes</li>
+                  <li>Network congestion</li>
+                  <li>Blockchain transaction requirements</li>
+                </ul>
                 <p className="mb-3">
-                  Cryptocurrency transactions may involve blockchain network fees,
-                  confirmation delays, exchange-rate changes, transaction
-                  irreversibility, and other factors outside the direct control of
-                  DC Trades.
-                </p>
-                <p className="mb-3">
-                  You are responsible for sending the correct cryptocurrency,
-                  amount, and transaction to the payment destination provided during
-                  checkout.
-                </p>
-                <p className="mb-3">
-                  Sending cryptocurrency to an incorrect address, using an
-                  unsupported asset or network, or otherwise failing to follow
-                  payment instructions may result in the payment not being
-                  recognized.
+                  You are responsible for sending the correct cryptocurrency, exact amount, and
+                  correct network shown during checkout.
                 </p>
                 <p>
-                  DC Trades does not request private keys, seed phrases, recovery
-                  phrases, or wallet passwords.
+                  For current DC Trades crypto checkout, payments may require USDT using the
+                  TRC20 (TRON) network.
+                </p>
+              </section>
+
+              <section id="crypto-errors">
+                <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
+                  6. Incorrect Cryptocurrency or Network
+                </h2>
+                <p className="mb-3">
+                  You must carefully verify the payment instructions before sending funds.
+                </p>
+                <p className="mb-2">Sending:</p>
+                <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground mb-3">
+                  <li>The wrong cryptocurrency</li>
+                  <li>The wrong network</li>
+                  <li>An incorrect amount</li>
+                  <li>Funds to an incorrect address</li>
+                </ul>
+                <p className="mb-3">
+                  may result in the payment being delayed, rejected, or not recognized.
+                </p>
+                <p className="mb-3">
+                  DC Trades cannot guarantee recovery of funds sent incorrectly.
+                </p>
+                <p>
+                  DC Trades will never ask you for your private key, seed phrase, recovery
+                  phrase, wallet password, or other wallet credentials.
                 </p>
               </section>
 
               <section id="crypto-refunds">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  6. Cryptocurrency Refunds
+                  7. Cryptocurrency Refunds
                 </h2>
                 <p className="mb-3">
-                  Where a refund is approved for a cryptocurrency payment, the
-                  refund method and amount may depend on the payment provider,
-                  transaction status, applicable law, and technical availability.
+                  If DC Trades approves a refund for a cryptocurrency payment, the refund
+                  method will depend on the payment provider, transaction status, technical
+                  availability, and applicable law.
                 </p>
                 <p className="mb-3">
-                  Because cryptocurrency values can change after a transaction,
-                  the amount of cryptocurrency returned may differ from the
-                  cryptocurrency amount originally sent.
-                </p>
-                <p className="mb-3">
-                  Any applicable blockchain or payment-provider fees may affect the
-                  amount received.
+                  Because cryptocurrency prices can change, the cryptocurrency amount returned
+                  may differ from the amount originally sent.
                 </p>
                 <p>
-                  We will provide reasonable information about the applicable refund
-                  method when a cryptocurrency refund is approved.
+                  Blockchain and payment-provider fees may also affect the final amount
+                  received.
                 </p>
               </section>
 
               <section id="failed-payments">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  7. Failed Payments
+                  8. Failed, Expired, or Unconfirmed Payments
                 </h2>
+                <p className="mb-3">
+                  A payment may remain pending while blockchain confirmation is being
+                  completed.
+                </p>
+                <p className="mb-2">If a payment:</p>
+                <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground mb-3">
+                  <li>Fails</li>
+                  <li>Expires</li>
+                  <li>Is rejected</li>
+                  <li>Is not received</li>
+                  <li>Cannot be confirmed</li>
+                </ul>
+                <p className="mb-3">
+                  the corresponding paid plan may not be activated.
+                </p>
                 <p>
-                  If a payment fails, expires, is rejected, or cannot be confirmed,
-                  access to paid features may not be activated or may be suspended
-                  until the payment issue is resolved.
+                  If you believe you completed a payment but your account was not activated,
+                  contact DC Trades with your payment reference ID.
+                </p>
+              </section>
+
+              <section id="confirmation">
+                <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
+                  9. Payment Confirmation and Activation
+                </h2>
+                <p className="mb-3">
+                  DC Trades activates a paid plan after the payment provider reports the payment
+                  as successfully completed.
+                </p>
+                <p className="mb-3">
+                  A payment showing as waiting or confirming does not necessarily mean that the
+                  subscription has been activated.
+                </p>
+                <p>
+                  Once the payment reaches the required completed status, DC Trades processes
+                  the subscription automatically.
                 </p>
               </section>
 
               <section id="disputes">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  8. Chargebacks and Payment Disputes
+                  10. Chargebacks and Payment Disputes
                 </h2>
                 <p className="mb-3">
-                  If you believe a payment was made incorrectly, please contact us
-                  before initiating a payment dispute where reasonably possible.
+                  If you believe there is a problem with a payment, please contact DC Trades first
+                  so that we can investigate the issue.
                 </p>
                 <p>
-                  Nothing in this policy limits any rights you may have under
-                  applicable consumer-protection or payment laws.
+                  Nothing in this policy limits any rights or remedies available to you under
+                  applicable law.
                 </p>
               </section>
 
               <section id="promotions">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  9. Promotional Offers
+                  11. Promotional Offers
                 </h2>
                 <p className="mb-3">
-                  Promotional offers, discounts, trials, or special pricing may be
-                  subject to additional terms displayed when the offer is provided.
+                  Discounts, promotional pricing, or special offers may have additional
+                  conditions.
                 </p>
                 <p>
-                  Unless expressly stated otherwise, promotional pricing does not
-                  create a permanent entitlement to the discounted price.
+                  Unless expressly stated otherwise, promotional pricing does not guarantee the
+                  same price for future purchases.
                 </p>
               </section>
 
-              <section id="free-plans">
+              <section id="free-plan">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  10. Free Plans and Trials
+                  12. Free Plan
                 </h2>
                 <p className="mb-3">
-                  If DC Trades offers a free plan or trial, access may be limited
-                  according to the applicable plan terms.
+                  DC Trades currently provides a Free plan with limited functionality.
                 </p>
                 <p>
-                  A free plan or trial does not necessarily convert into a paid
-                  subscription unless the applicable purchase terms clearly state
-                  otherwise.
+                  The Free plan does not require payment and does not automatically convert into
+                  a paid plan unless you separately choose to purchase a paid plan.
                 </p>
               </section>
 
               <section id="termination">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  11. Account Termination
+                  13. Account Suspension or Termination
                 </h2>
                 <p>
-                  If your account is suspended or terminated because of fraud,
-                  abuse, unlawful activity, security violations, or material
-                  violations of our Terms of Service, you may not be entitled to a
-                  refund except where required by applicable law.
+                  If your account is suspended or terminated because of fraud, abuse,
+                  unlawful activity, security violations, or material violations of the DC Trades
+                  Terms of Service, you may not be entitled to a refund, except where required by
+                  applicable law.
                 </p>
               </section>
 
               <section id="service-changes">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  12. Service Changes
+                  14. Service Changes
                 </h2>
                 <p className="mb-3">
-                  We may change, suspend, or discontinue paid features when
-                  reasonably necessary.
+                  DC Trades may modify, suspend, or discontinue features when reasonably
+                  necessary.
                 </p>
                 <p>
-                  Where applicable law requires a refund or other remedy because of
-                  a material service change, we will provide the remedy required by
-                  that law.
+                  If a material service change requires a refund or other remedy under applicable
+                  law, DC Trades will provide the remedy required by law.
                 </p>
               </section>
 
               <section id="request-refund">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  13. How to Request a Refund
+                  15. How to Request a Refund
                 </h2>
                 <p className="mb-3">
-                  To request a refund or report a billing issue, contact us using
-                  the email address below.
+                  To request a refund or report a billing issue, contact:
                 </p>
+                <p className="mb-2">Email: <a href="mailto:support@dctrades.in" className="text-foreground hover:underline">support@dctrades.in</a></p>
                 <p className="mb-2">Please include:</p>
                 <ul className="list-disc list-inside space-y-1 pl-2 text-muted-foreground mb-3">
                   <li>Your DC Trades account email</li>
-                  <li>Transaction date</li>
-                  <li>Transaction or payment reference, if available</li>
+                  <li>Payment date</li>
+                  <li>Payment Reference ID</li>
+                  <li>Transaction hash, if available</li>
+                  <li>Plan purchased</li>
                   <li>A brief explanation of the issue</li>
                 </ul>
                 <p>
-                  Do not send passwords, private keys, seed phrases, recovery
-                  phrases, or other authentication credentials in a refund request.
+                  Never send passwords, private keys, seed phrases, recovery phrases, or
+                  wallet credentials.
                 </p>
               </section>
 
               <section id="processing">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  14. Processing Refund Requests
+                  16. Refund Processing
                 </h2>
                 <p className="mb-3">
-                  We will review refund requests and respond within a reasonable
-                  period.
+                  Refund requests will be reviewed on a case-by-case basis.
                 </p>
                 <p>
-                  If a refund is approved, the timing of the refund may depend on
-                  the payment provider, payment method, banking system, blockchain
-                  network, and other factors outside our control.
+                  If a refund is approved, processing time may depend on the payment provider,
+                  payment method, blockchain network, and other factors outside DC Trades&apos;
+                  control.
                 </p>
               </section>
 
               <section id="consumer-rights">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  15. Consumer Rights
+                  17. Consumer Rights
                 </h2>
                 <p>
-                  Nothing in this policy is intended to remove, restrict, or waive
-                  any mandatory consumer rights or legal remedies that apply to you.
+                  Nothing in this policy is intended to remove, restrict, or waive any mandatory
+                  consumer rights or legal remedies that apply to you.
                 </p>
               </section>
 
               <section id="policy-changes">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  16. Changes to This Policy
+                  18. Changes to This Policy
                 </h2>
                 <p className="mb-3">
-                  We may update this Refund &amp; Cancellation Policy when our pricing,
-                  payment methods, services, or legal requirements change.
+                  DC Trades may update this Refund &amp; Cancellation Policy when its services,
+                  pricing, payment methods, or legal requirements change.
                 </p>
                 <p>
-                  The latest version will be published on this page with the
-                  applicable &quot;Last updated&quot; date.
+                  The latest version will be published on this page with the applicable Last
+                  updated date.
                 </p>
               </section>
 
               <section id="contact">
                 <h2 className="border-b border-border pb-1 font-serif text-xl font-normal text-foreground mb-3">
-                  17. Contact
+                  19. Contact
                 </h2>
                 <p className="mb-3">
-                  For billing, cancellation, or refund questions, contact:
+                  For payment, cancellation, or refund questions:
                 </p>
                 <div className="rounded border border-border p-3 text-xs leading-relaxed">
                   <p>DC Trades</p>
@@ -381,7 +440,7 @@ export default function RefundPolicyPage() {
                 </div>
                 <div>
                   <dt className="text-muted-foreground">Last updated</dt>
-                  <dd>August 9, 2026</dd>
+                  <dd>August 10, 2026</dd>
                 </div>
                 <div>
                   <dt className="text-muted-foreground">Contact Email</dt>

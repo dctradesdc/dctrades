@@ -7,6 +7,14 @@ import {
 } from "./plans";
 import type { UserSubscription } from "./types";
 
+const FREE_SUBSCRIPTION: UserSubscription = {
+  plan: "free",
+  status: "active",
+  startedAt: null,
+  expiresAt: null,
+  paymentId: null,
+};
+
 export const getUserSubscription = cache(
   async (): Promise<UserSubscription> => {
     const supabase = await createClient();
@@ -15,14 +23,9 @@ export const getUserSubscription = cache(
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Not logged in
     if (!user) {
-      return {
-        plan: "free",
-        status: "active",
-        startedAt: null,
-        expiresAt: null,
-        paymentId: null,
-      };
+      return FREE_SUBSCRIPTION;
     }
 
     const { data: subscriptions, error } =
@@ -43,48 +46,37 @@ export const getUserSubscription = cache(
         error
       );
 
-      return {
-        plan: "free",
-        status: "active",
-        startedAt: null,
-        expiresAt: null,
-        paymentId: null,
-      };
+      return FREE_SUBSCRIPTION;
     }
 
-    const subscription =
-      subscriptions?.find(
-        (item) =>
-          item.expires_at &&
-          new Date(item.expires_at) > new Date()
+    const now = new Date();
+
+    const subscription = subscriptions?.find(
+      (item) =>
+        item.expires_at &&
+        new Date(item.expires_at) > now
+    );
+
+    // No active subscription
+    if (!subscription) {
+      return FREE_SUBSCRIPTION;
+    }
+
+    const plan = subscription.plan as PlanName;
+
+    // Invalid database plan
+    if (!PLANS[plan]) {
+      console.error(
+        "Invalid subscription plan:",
+        subscription.plan
       );
 
-    if (!subscription) {
-      return {
-        plan: "free",
-        status: "active",
-        startedAt: null,
-        expiresAt: null,
-        paymentId: null,
-      };
-    }
-
-    const plan =
-      subscription.plan as PlanName;
-
-    if (!PLANS[plan]) {
-      return {
-        plan: "free",
-        status: "active",
-        startedAt: null,
-        expiresAt: null,
-        paymentId: null,
-      };
+      return FREE_SUBSCRIPTION;
     }
 
     return {
       plan,
-      status: subscription.status,
+      status: "active",
       startedAt: subscription.started_at,
       expiresAt: subscription.expires_at,
       paymentId:
