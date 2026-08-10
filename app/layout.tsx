@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
   title: {
     default: siteConfig.title,
-    template: "%s | DC Trades",
+    template: `%s | ${siteConfig.name}`,
   },
 
   description: siteConfig.description,
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   referrer: "origin-when-cross-origin",
 
   alternates: {
-    canonical: siteConfig.url,
+    canonical: "/",
   },
 
   robots: {
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
         url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: siteConfig.title,
+        alt: `${siteConfig.name} - Trading Journal`,
       },
     ],
   },
@@ -149,7 +149,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <script
           type="application/ld+json"
@@ -163,7 +163,9 @@ export default function RootLayout({
         <ViewTransitions>
           <NextTopLoader />
 
-          <AppProvider>{children}</AppProvider>
+          <AppProvider>
+            {children}
+          </AppProvider>
         </ViewTransitions>
       </body>
     </html>

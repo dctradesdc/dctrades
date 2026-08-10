@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_APP_URL ?? "https://dctrades.in";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_APP_URL ??
+  "https://www.dctrades.in"
+).replace(/\/$/, "");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -12,6 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 1,
+    },
+    {
+      url: `${siteUrl}/pricing`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: `${siteUrl}/calculator`,
@@ -48,12 +56,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,
-    },
-    {
-      url: `${siteUrl}/pricing`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
     },
   ];
 }

@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 export const siteConfig = {
   name: "DC Trades",
 
-  url:
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://www.dctrades.in",
+  url: (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    "https://www.dctrades.in"
+  ).replace(/\/$/, ""),
 
   title: "DC Trades – Professional Trading Journal",
 
@@ -73,6 +75,14 @@ export function createMetadata({
       : {
           index: true,
           follow: true,
+
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-video-preview": -1,
+            "max-snippet": -1,
+          },
         },
 
     openGraph: {
@@ -88,7 +98,7 @@ export function createMetadata({
           url: siteConfig.ogImage,
           width: 1200,
           height: 630,
-          alt: pageTitle,
+          alt: `${pageTitle} - DC Trades`,
         },
       ],
     },
