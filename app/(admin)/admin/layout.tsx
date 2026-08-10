@@ -9,8 +9,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase =
-    await createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
@@ -20,12 +19,11 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const { data: profile } =
-    await supabase
-      .from("profiles")
-      .select("is_admin")
-      .eq("id", user.id)
-      .single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
 
   if (!profile?.is_admin) {
     redirect("/dashboard");
@@ -33,7 +31,9 @@ export default async function AdminLayout({
 
   return (
     <AdminLayoutClient>
-      {children}
+      <div className="mx-auto w-full min-w-0 max-w-[120rem] p-4 sm:p-6 lg:p-8 2xl:p-12">
+        {children}
+      </div>
     </AdminLayoutClient>
   );
 }

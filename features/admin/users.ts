@@ -12,6 +12,18 @@ export interface AdminUser {
   accounts: number;
   trades: number;
   status: "active" | "inactive" | "suspended";
+
+  subscription: {
+    plan: "free" | "basic" | "pro";
+    status:
+      | "active"
+      | "expired"
+      | "pending"
+      | "cancelled";
+    startedAt: string | null;
+    expiresAt: string | null;
+    paymentId: string | null;
+  };
 }
 
 export async function getUsers(): Promise<AdminUser[]> {
@@ -27,6 +39,7 @@ export async function getUsers(): Promise<AdminUser[]> {
   }
 
   const sevenDaysAgo = new Date();
+
   sevenDaysAgo.setDate(
     sevenDaysAgo.getDate() - 7
   );
@@ -35,20 +48,45 @@ export async function getUsers(): Promise<AdminUser[]> {
     { data: profiles },
     { data: accounts },
     { data: trades },
+    { data: subscriptions },
   ] = await Promise.all([
-    supabase.from("profiles").select("*"),
+    supabase
+      .from("profiles")
+      .select("*"),
+
     supabase
       .from("accounts")
       .select("user_id"),
+
     supabase
       .from("trades")
       .select("user_id"),
+
+    supabase
+      .from("subscriptions")
+      .select(
+        "user_id, plan, status, started_at, expires_at, provider_payment_id"
+      ),
   ]);
+
+  const now = new Date();
 
   return users.map((user) => {
     const profile = profiles?.find(
       (p) => p.id === user.id
     );
+
+    /*
+     * Use Supabase Auth last_sign_in_at as the
+     * primary activity source.
+     *
+     * Fall back to profile.last_active_at if
+     * Auth does not have a sign-in timestamp.
+     */
+    const lastActiveAt =
+      user.last_sign_in_at ??
+      profile?.last_active_at ??
+      null;
 
     let status: AdminUser["status"] =
       "inactive";
@@ -56,13 +94,22 @@ export async function getUsers(): Promise<AdminUser[]> {
     if (profile?.is_suspended) {
       status = "suspended";
     } else if (
-      profile?.last_active_at &&
-      new Date(
-        profile.last_active_at
-      ) > sevenDaysAgo
+      lastActiveAt &&
+      new Date(lastActiveAt) > sevenDaysAgo
     ) {
       status = "active";
     }
+
+    const subscription =
+      subscriptions?.find(
+        (subscription) =>
+          subscription.user_id === user.id &&
+          subscription.status === "active" &&
+          subscription.expires_at &&
+          new Date(
+            subscription.expires_at
+          ) > now
+      );
 
     return {
       id: user.id,
@@ -76,18 +123,17 @@ export async function getUsers(): Promise<AdminUser[]> {
         profile?.avatar_url ?? null,
 
       created_at:
-        profile?.created_at ?? "",
+        profile?.created_at ??
+        user.created_at ??
+        "",
 
-      last_active_at:
-        profile?.last_active_at ??
-        null,
+      last_active_at: lastActiveAt,
 
       is_admin:
         profile?.is_admin ?? false,
 
       is_suspended:
-        profile?.is_suspended ??
-        false,
+        profile?.is_suspended ?? false,
 
       accounts:
         accounts?.filter(
@@ -102,6 +148,40 @@ export async function getUsers(): Promise<AdminUser[]> {
         ).length ?? 0,
 
       status,
+
+      subscription: subscription
+        ? {
+            plan: subscription.plan as
+              | "free"
+              | "basic"
+              | "pro",
+
+            status: subscription.status as
+              | "active"
+              | "expired"
+              | "pending"
+              | "cancelled",
+
+            startedAt:
+              subscription.started_at,
+
+            expiresAt:
+              subscription.expires_at,
+
+            paymentId:
+              subscription.provider_payment_id,
+          }
+        : {
+            plan: "free",
+
+            status: "active",
+
+            startedAt: null,
+
+            expiresAt: null,
+
+            paymentId: null,
+          },
     };
   });
 }

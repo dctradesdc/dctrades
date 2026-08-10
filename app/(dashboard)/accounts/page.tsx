@@ -9,44 +9,24 @@ import {
 
 import { getUserSubscription } from "@/lib/subscriptions/get-user-plan";
 import { getPlanLimits } from "@/lib/subscriptions/limits";
-import { createClient } from "@/lib/supabase/server";
 
 export default async function AccountsPage() {
   const accounts = await getAccounts();
-  const archivedAccounts = await getArchivedAccounts();
 
-  const subscription = await getUserSubscription();
-  const limits = getPlanLimits(subscription.plan);
+  const archivedAccounts =
+    await getArchivedAccounts();
 
-  const supabase = await createClient();
+  const subscription =
+    await getUserSubscription();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const limits =
+    getPlanLimits(subscription.plan);
 
-  let accountCount = accounts.length;
+  const accountCount = accounts.length;
 
-  if (user) {
-    const { count } = await supabase
-      .from("accounts")
-      .select("id", {
-        count: "exact",
-        head: true,
-      })
-      .eq("user_id", user.id)
-      .eq("archived", false);
-
-    accountCount = count ?? 0;
-  }
-
-  const accountLimitText =
-    limits.maxAccounts === null
-      ? "Unlimited"
-      : `${accountCount} / ${limits.maxAccounts}`;
-
-  const canCreate =
-    limits.maxAccounts === null ||
-    accountCount < limits.maxAccounts;
+  const hasReachedLimit =
+    limits.maxAccounts !== null &&
+    accountCount >= limits.maxAccounts;
 
   return (
     <div className="space-y-8">
@@ -60,17 +40,24 @@ export default async function AccountsPage() {
             Create and manage your trading journal accounts.
           </p>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
-            <span className="rounded-full border bg-muted/40 px-3 py-1 font-medium capitalize">
-              {subscription.plan} Plan
-            </span>
-
-            <span className="rounded-full border bg-muted/40 px-3 py-1 text-muted-foreground">
-              Accounts:{" "}
-              <span className="font-medium text-foreground">
-                {accountLimitText}
+          <div className="mt-3 text-sm text-muted-foreground">
+            {limits.maxAccounts === null ? (
+              <span>
+                {subscription.plan.toUpperCase()} ·{" "}
+                <strong className="text-foreground">
+                  {accountCount}
+                </strong>{" "}
+                accounts · Unlimited
               </span>
-            </span>
+            ) : (
+              <span>
+                {subscription.plan.toUpperCase()} ·{" "}
+                <strong className="text-foreground">
+                  {accountCount}
+                </strong>{" "}
+                / {limits.maxAccounts} accounts
+              </span>
+            )}
           </div>
         </div>
 
@@ -79,12 +66,12 @@ export default async function AccountsPage() {
             accounts={archivedAccounts}
           />
 
-          {canCreate ? (
+          {!hasReachedLimit ? (
             <CreateAccountDialog />
           ) : (
             <a
               href="/pricing"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
             >
               Upgrade Plan
             </a>
@@ -92,7 +79,22 @@ export default async function AccountsPage() {
         </div>
       </div>
 
-      <AccountGrid accounts={accounts} />
+      {hasReachedLimit && (
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+          <p className="text-sm font-medium">
+            You have reached your{" "}
+            {limits.maxAccounts} account limit.
+          </p>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Upgrade your plan to create more trading accounts.
+          </p>
+        </div>
+      )}
+
+      <AccountGrid
+        accounts={accounts}
+      />
     </div>
   );
 }

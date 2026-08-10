@@ -54,24 +54,24 @@ export function AdminSidebar({ mobileOpen, setMobileOpen }: AdminSidebarProps) {
       {/* Mobile Backdrop Overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background/85 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-background/85 backdrop-blur-xs md:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       <Sidebar
-        className={`fixed inset-y-0 left-0 z-50 flex h-full border-r bg-background transition-all duration-300 ease-in-out md:sticky md:z-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-full border-r border-border/60 bg-background transition-all duration-300 ease-in-out md:sticky md:z-0 ${
           // Mobile state logic
           mobileOpen ? "translate-x-0 w-70" : "-translate-x-full md:translate-x-0"
         } ${
           // Desktop folding logic
-          isCollapsed ? "md:w-17.5" : "md:w-65"
+          isCollapsed ? "md:w-16" : "md:w-64"
         }`}
       >
         {/* Header containing the Logo */}
-        <SidebarHeader className="relative border-b p-4 flex flex-row items-center justify-between min-h-16.25">
+        <SidebarHeader className="relative border-b border-border/60 p-4 flex flex-row items-center justify-between min-h-16">
           <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-            <Shield className="h-6 w-6 shrink-0 text-primary transition-transform duration-300" />
+            <Shield className="size-6 shrink-0 text-primary transition-transform duration-300" />
             
             {/* Logo details disappear smoothly when folded */}
             <div
@@ -89,9 +89,9 @@ export function AdminSidebar({ mobileOpen, setMobileOpen }: AdminSidebarProps) {
             variant="ghost"
             size="icon"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="absolute -right-3 top-4 hidden h-6 w-6 rounded-full border bg-background p-0 shadow-sm hover:bg-accent md:flex z-50"
+            className="absolute -right-3 top-4 hidden size-6 rounded-full border border-border/60 bg-background p-0 shadow-xs hover:bg-accent md:flex z-50"
           >
-            {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+            {isCollapsed ? <ChevronRight className="size-3" /> : <ChevronLeft className="size-3" />}
           </Button>
         </SidebarHeader>
 
@@ -121,7 +121,7 @@ export function AdminSidebar({ mobileOpen, setMobileOpen }: AdminSidebarProps) {
                         } ${isCollapsed ? "md:justify-center md:px-0" : ""}`}
                       >
                         <item.icon
-                          className="h-5 w-5 shrink-0 md:h-4 md:w-4"
+                          className="size-5 shrink-0 md:size-4"
                           strokeWidth={active ? 2.5 : 2}
                         />
                         <span className={`transition-all duration-300 ${isCollapsed ? "md:hidden" : "block"}`}>
@@ -137,7 +137,7 @@ export function AdminSidebar({ mobileOpen, setMobileOpen }: AdminSidebarProps) {
         </SidebarContent>
 
         {/* Footer Actions */}
-        <SidebarFooter className="border-t p-2">
+        <SidebarFooter className="border-t border-border/60 p-2">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton className="p-0 hover:bg-transparent">
@@ -147,7 +147,7 @@ export function AdminSidebar({ mobileOpen, setMobileOpen }: AdminSidebarProps) {
                     isCollapsed ? "md:justify-center md:px-0" : ""
                   }`}
                 >
-                  <ArrowLeft className="h-5 w-5 shrink-0 md:h-4 md:w-4" />
+                  <ArrowLeft className="size-5 shrink-0 md:size-4" />
                   <span className={isCollapsed ? "md:hidden" : "block"}>Back to Dashboard</span>
                 </Link>
               </SidebarMenuButton>
@@ -161,7 +161,7 @@ export function AdminSidebar({ mobileOpen, setMobileOpen }: AdminSidebarProps) {
                     isCollapsed ? "md:justify-center md:px-0" : "justify-start"
                   }`}
                 >
-                  <LogOut className="h-5 w-5 shrink-0 md:h-4 md:w-4" />
+                  <LogOut className="size-5 shrink-0 md:size-4" />
                   <span className={isCollapsed ? "md:hidden" : "block"}>Logout</span>
                 </SidebarMenuButton>
               </form>

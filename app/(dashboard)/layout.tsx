@@ -12,13 +12,15 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
+import { getUserSubscription } from "@/lib/subscriptions/get-user-plan";
+import { getPlanLimits } from "@/lib/subscriptions/limits";
+
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase =
-    await createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
@@ -29,7 +31,7 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  // Get suspension + admin status
+  // Suspension + admin status
   const {
     data: profileStatus,
     error: profileError,
@@ -47,6 +49,7 @@ export default async function DashboardLayout({
     redirect("/suspended");
   }
 
+  // Accounts
   const {
     data,
     error: accountsError,
@@ -69,12 +72,40 @@ export default async function DashboardLayout({
       (account) => account.is_active
     ) ?? accounts[0];
 
-  const profile =
-    await getProfile();
+  // Profile
+  const profile = await getProfile();
+
+  // Subscription
+  const subscription =
+    await getUserSubscription();
+
+  const planLimits =
+    getPlanLimits(subscription.plan);
+
+  // Account usage
+  const accountCount = accounts.filter(
+    (account) => !account.archived
+  ).length;
+
+  // Trade usage
+  const { count: tradeCount } =
+    await supabase
+      .from("trades")
+      .select("id", {
+        count: "exact",
+        head: true,
+      })
+      .eq("user_id", user.id);
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar
+        plan={subscription.plan}
+        accountCount={accountCount}
+        accountLimit={planLimits.maxAccounts}
+        tradeCount={tradeCount ?? 0}
+        tradeLimit={planLimits.maxTrades}
+      />
 
       <SidebarInset>
         <SiteHeader

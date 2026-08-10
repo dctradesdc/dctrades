@@ -2,6 +2,7 @@
 
 import { Link } from "next-view-transitions";
 import { usePathname } from "next/navigation";
+
 import {
   Briefcase,
   Calendar,
@@ -23,6 +24,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
+import type { PlanName } from "@/lib/subscriptions/plans";
 
 const items = [
   {
@@ -57,22 +60,55 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  plan: PlanName;
+  accountCount: number;
+  accountLimit: number | null;
+  tradeCount: number;
+  tradeLimit: number | null;
+}
+
+export function AppSidebar({
+  plan,
+  accountCount,
+  accountLimit,
+  tradeCount,
+  tradeLimit,
+}: AppSidebarProps) {
   const pathname = usePathname();
 
+  const accountPercentage =
+    accountLimit === null
+      ? 0
+      : Math.min(
+          (accountCount / accountLimit) * 100,
+          100
+        );
+
+  const tradePercentage =
+    tradeLimit === null
+      ? 0
+      : Math.min(
+          (tradeCount / tradeLimit) * 100,
+          100
+        );
+
   return (
-    <Sidebar className="border-r bg-background">
-      <SidebarHeader className="border-b px-4 py-3">
-        <div className="flex flex-col gap-0.5">
-          <h2 className="text-sm font-bold tracking-tight text-slate-900 dark:text-slate-50">
+    <Sidebar>
+      {/* Header */}
+      <SidebarHeader className="border-b">
+        <div className="flex flex-col px-4 py-3">
+          <span className="text-lg font-bold">
             DC Trades
-          </h2>
-          <p className="text-xs font-medium text-muted-foreground">
+          </span>
+
+          <span className="text-xs text-muted-foreground">
             Trading Journal
-          </p>
+          </span>
         </div>
       </SidebarHeader>
 
+      {/* Navigation */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 text-xs font-semibold tracking-wider text-muted-foreground/70">
@@ -83,10 +119,14 @@ export function AppSidebar() {
             {items.map((item) => {
               const isActive =
                 pathname === item.url ||
-                pathname.startsWith(`${item.url}/`);
+                pathname.startsWith(
+                  `${item.url}/`
+                );
 
               return (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem
+                  key={item.title}
+                >
                   <SidebarMenuButton
                     tooltip={item.title}
                     className="p-0 hover:bg-transparent"
@@ -101,10 +141,14 @@ export function AppSidebar() {
                     >
                       <item.icon
                         className="h-4 w-4 shrink-0"
-                        strokeWidth={isActive ? 2.5 : 2}
+                        strokeWidth={
+                          isActive ? 2.5 : 2
+                        }
                       />
 
-                      <span className="text-sm">{item.title}</span>
+                      <span className="text-sm">
+                        {item.title}
+                      </span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -114,6 +158,79 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
+      {/* Subscription */}
+      <div className="px-3 pb-3">
+        <div className="rounded-xl border bg-muted/30 p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold capitalize">
+              {plan} Plan
+            </span>
+
+            {plan !== "pro" && (
+              <Link
+                href="/pricing"
+                className="text-[11px] font-medium text-primary hover:underline"
+              >
+                Upgrade
+              </Link>
+            )}
+          </div>
+
+          {/* Accounts */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">
+                Accounts
+              </span>
+
+              <span className="font-medium">
+                {accountLimit === null
+                  ? "Unlimited"
+                  : `${accountCount} / ${accountLimit}`}
+              </span>
+            </div>
+
+            {accountLimit !== null && (
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{
+                    width: `${accountPercentage}%`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Trades */}
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">
+                Trades
+              </span>
+
+              <span className="font-medium">
+                {tradeLimit === null
+                  ? "Unlimited"
+                  : `${tradeCount} / ${tradeLimit}`}
+              </span>
+            </div>
+
+            {tradeLimit !== null && (
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-all"
+                  style={{
+                    width: `${tradePercentage}%`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Profile */}
       <SidebarFooter className="border-t p-2">
         <SidebarMenu>
           <SidebarMenuItem>
@@ -140,7 +257,9 @@ export function AppSidebar() {
                   }
                 />
 
-                <span className="text-sm">Profile</span>
+                <span className="text-sm">
+                  Profile
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
